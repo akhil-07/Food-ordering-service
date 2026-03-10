@@ -1,9 +1,9 @@
-package com.example.demo.service;
+package com.santhosh.foodordering.service;
 
-import com.example.demo.model.Restaurant;
-import com.example.demo.model.Users;
-import com.example.demo.repo.RestaurantRepository;
-import com.example.demo.repo.UserRepository;
+import com.santhosh.foodordering.model.Restaurant;
+import com.santhosh.foodordering.model.Users;
+import com.santhosh.foodordering.repo.RestaurantRepository;
+import com.santhosh.foodordering.repo.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

@@ -1,7 +1,7 @@
-package com.example.demo.service;
+package com.santhosh.foodordering.service;
 
-import com.example.demo.model.Role;
-import com.example.demo.repo.RoleRepository;
+import com.santhosh.foodordering.model.Role;
+import com.santhosh.foodordering.repo.RoleRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

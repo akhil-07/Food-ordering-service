@@ -1,6 +1,6 @@
-package com.example.demo.repo;
+package com.santhosh.foodordering.repo;
 
-import com.example.demo.model.Payment;
+import com.santhosh.foodordering.model.Payment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

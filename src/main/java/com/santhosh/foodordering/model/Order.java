@@ -1,9 +1,8 @@
-package com.example.demo.model;
+package com.santhosh.foodordering.model;
 
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Entity
 @Table(name="orders")

@@ -1,7 +1,7 @@
-package com.example.demo.controller;
+package com.santhosh.foodordering.controller;
 
-import com.example.demo.model.Role;
-import com.example.demo.service.RoleService;
+import com.santhosh.foodordering.model.Role;
+import com.santhosh.foodordering.service.RoleService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

@@ -1,9 +1,8 @@
-package com.example.demo.controller;
+package com.santhosh.foodordering.controller;
 
-import com.example.demo.model.Restaurant;
-import com.example.demo.repo.RestaurantRepository;
-import com.example.demo.service.RestaurantService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.santhosh.foodordering.model.Restaurant;
+import com.santhosh.foodordering.repo.RestaurantRepository;
+import com.santhosh.foodordering.service.RestaurantService;
 import org.springframework.web.bind.annotation.*;
 
 
