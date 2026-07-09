@@ -1,40 +1,31 @@
 package com.santhosh.foodordering.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+/**
+ * A role grants a set of permissions. We keep a single role per user for clarity
+ * (ADMIN, RESTAURANT_OWNER, CUSTOMER). The {@code roleName} is stored WITHOUT the
+ * Spring Security "ROLE_" prefix; the prefix is added when building authorities.
+ */
 @Entity
-@Table(name="roles")
+@Table(name = "roles")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Role {
-    private String roleName;
+
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long roleId;
+
+    @Column(nullable = false, unique = true, length = 50)
+    private String roleName;
+
+    @Column(length = 200)
     private String roleDescription;
-
-    public Role() {
-    }
-
-    public String getRoleName() {
-        return roleName;
-    }
-
-    public void setRoleName(String roleName) {
-        this.roleName = roleName;
-    }
-
-    public Long getRoleId() {
-        return roleId;
-    }
-
-    public void setRoleId(Long roleId) {
-        this.roleId = roleId;
-    }
-
-    public String getRoleDescription() {
-        return roleDescription;
-    }
-
-    public void setRoleDescription(String roleDescription) {
-        this.roleDescription = roleDescription;
-    }
 }

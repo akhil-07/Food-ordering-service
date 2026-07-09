@@ -1,67 +1,36 @@
 package com.santhosh.foodordering.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.math.BigDecimal;
 
 @Entity
-@Table(name="fooditem")
+@Table(name = "food_item")
+@Getter
+@Setter
+@NoArgsConstructor
 public class FoodItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long foodid;
+
+    @Column(nullable = false, length = 120)
     private String name;
-    private  double price;
+
+    @Column(nullable = false)
+    private double price;
+
+    @Column(length = 60)
     private String category;
-    private  boolean available;
 
-    @ManyToOne
+    @Column(nullable = false)
+    private boolean available;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "restaurant_id", referencedColumnName = "rstid", nullable = false)
     private Restaurant restaurant;
-
-    public Long getFoodid() {
-        return foodid;
-    }
-
-    public void setFoodid(Long foodid) {
-        this.foodid = foodid;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    public boolean isAvailable() {
-        return available;
-    }
-
-    public void setAvailable(boolean available) {
-        this.available = available;
-    }
-
-    public Restaurant getRestaurant() {
-        return restaurant;
-    }
-
-    public void setRestaurant(Restaurant restaurant) {
-        this.restaurant = restaurant;
-    }
 }

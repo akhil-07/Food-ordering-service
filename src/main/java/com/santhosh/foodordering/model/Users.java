@@ -1,64 +1,32 @@
 package com.santhosh.foodordering.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
-@Table(name="users")
+@Table(name = "users")
+@Getter
+@Setter
+@NoArgsConstructor
 public class Users {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false, unique = true, length = 50)
     private String username;
+
+    /** BCrypt-hashed password. Never serialized back to clients (no response DTO exposes it). */
+    @Column(nullable = false)
     private String password;
+
+    @Column(nullable = false, unique = true, length = 120)
     private String email;
 
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    @ManyToOne
-    @JoinColumn(name="role_id")
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "role_id", referencedColumnName = "roleId", nullable = false)
     private Role role;
-
-
-
-
-
 }

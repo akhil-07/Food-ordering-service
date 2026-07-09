@@ -1,70 +1,51 @@
 package com.santhosh.foodordering.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Table(name="orders")
+@Table(name = "orders")
+@Getter
+@Setter
+@NoArgsConstructor
 public class Order {
+
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long ordid;
 
-    @ManyToOne
+    /** The CUSTOMER who placed the order. */
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     private Users user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "restaurant_id", referencedColumnName = "rstid", nullable = false)
     private Restaurant restaurant;
-    private String status;
-    private double totalamount;
-    private LocalDateTime orderdate;
 
-    public Long getOrdid() {
-        return ordid;
-    }
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 30)
+    private OrderStatus status;
 
-    public void setOrdid(Long ordid) {
-        this.ordid = ordid;
-    }
+    @Column(nullable = false)
+    private double totalAmount;
 
-    public Users getUser() {
-        return user;
-    }
+    @Column(nullable = false)
+    private LocalDateTime orderDate;
 
-    public void setUser(Users user) {
-        this.user = user;
-    }
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderItem> items = new ArrayList<>();
 
-    public Restaurant getRestaurant() {
-        return restaurant;
-    }
-
-    public void setRestaurant(Restaurant restaurant) {
-        this.restaurant = restaurant;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public double getTotalamount() {
-        return totalamount;
-    }
-
-    public void setTotalamount(double totalamount) {
-        this.totalamount = totalamount;
-    }
-
-    public LocalDateTime getOrderdate() {
-        return orderdate;
-    }
-
-    public void setOrderdate(LocalDateTime orderdate) {
-        this.orderdate = orderdate;
+    /** Keeps both sides of the relationship in sync. */
+    public void addItem(OrderItem item) {
+        items.add(item);
+        item.setOrder(this);
     }
 }

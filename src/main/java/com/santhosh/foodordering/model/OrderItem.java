@@ -1,61 +1,35 @@
 package com.santhosh.foodordering.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.math.BigDecimal;
 
 @Entity
-@Table(name="orderitems")
+@Table(name = "order_item")
+@Getter
+@Setter
+@NoArgsConstructor
 public class OrderItem {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orditemid;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "order_id", referencedColumnName = "ordid", nullable = false)
     private Order order;
 
-    @ManyToOne
-    private FoodItem fooditem;
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "food_item_id", referencedColumnName = "foodid", nullable = false)
+    private FoodItem foodItem;
 
+    @Column(nullable = false)
     private int quantity;
+
+    /** Unit price captured at order time (so later menu price changes don't rewrite history). */
+    @Column(nullable = false)
     private double price;
-
-    public Long getOrditemid() {
-        return orditemid;
-    }
-
-    public void setOrditemid(Long orditemid) {
-        this.orditemid = orditemid;
-    }
-
-    public Order getOrder() {
-        return order;
-    }
-
-    public void setOrder(Order order) {
-        this.order = order;
-    }
-
-    public FoodItem getFooditem() {
-        return fooditem;
-    }
-
-    public void setFooditem(FoodItem fooditem) {
-        this.fooditem = fooditem;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
 }

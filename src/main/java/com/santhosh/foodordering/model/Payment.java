@@ -1,50 +1,41 @@
 package com.santhosh.foodordering.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name="payment")
+@Table(name = "payment")
+@Getter
+@Setter
+@NoArgsConstructor
 public class Payment {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
-    private  Long payid;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long payid;
 
-    @ManyToOne
+    @OneToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "order_id", referencedColumnName = "ordid", nullable = false, unique = true)
     private Order order;
 
-    private String paymentMode;
-    private String paymentStatus;
+    @Column(nullable = false)
+    private double amount;
 
-    public Long getPayid() {
-        return payid;
-    }
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private PaymentMode paymentMode;
 
-    public void setPayid(Long payid) {
-        this.payid = payid;
-    }
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private PaymentStatus paymentStatus;
 
-    public Order getOrder() {
-        return order;
-    }
+    @Column(nullable = false)
+    private LocalDateTime paidAt;
 
-    public void setOrder(Order order) {
-        this.order = order;
-    }
-
-    public String getPaymentMode() {
-        return paymentMode;
-    }
-
-    public void setPaymentMode(String paymentMode) {
-        this.paymentMode = paymentMode;
-    }
-
-    public String getPaymentStatus() {
-        return paymentStatus;
-    }
-
-    public void setPaymentStatus(String paymentStatus) {
-        this.paymentStatus = paymentStatus;
-    }
+    private String transactionId;
 }

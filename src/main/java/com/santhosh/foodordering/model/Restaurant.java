@@ -1,60 +1,33 @@
 package com.santhosh.foodordering.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
-@Table(name="restaurant")
+@Table(name = "restaurant")
+@Getter
+@Setter
+@NoArgsConstructor
 public class Restaurant {
+
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long rstid;
+
+    @Column(nullable = false, length = 120)
     private String name;
+
+    @Column(length = 255)
     private String address;
+
+    /** Whether the restaurant is currently open / accepting orders. */
+    @Column(nullable = false)
     private boolean active;
 
-    @ManyToOne
-    private  Users users;
-
-    public Restaurant() {
-    }
-
-    public Long getRstid() {
-        return rstid;
-    }
-
-    public void setRstid(Long rstid) {
-        this.rstid = rstid;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
-    public Users getUsers() {
-        return users;
-    }
-
-    public void setUsers(Users users) {
-        this.users = users;
-    }
+    /** The RESTAURANT_OWNER that owns this restaurant. */
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "owner_id", nullable = false)
+    private Users owner;
 }

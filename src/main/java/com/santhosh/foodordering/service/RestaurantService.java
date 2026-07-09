@@ -1,64 +1,87 @@
 package com.santhosh.foodordering.service;
 
+import com.santhosh.foodordering.dto.request.RestaurantRequest;
+import com.santhosh.foodordering.exception.ResourceNotFoundException;
 import com.santhosh.foodordering.model.Restaurant;
-import com.santhosh.foodordering.model.Users;
 import com.santhosh.foodordering.repo.RestaurantRepository;
-import com.santhosh.foodordering.repo.UserRepository;
+import com.santhosh.foodordering.security.CurrentUserProvider;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class RestaurantService {
 
     private final RestaurantRepository restaurantRepository;
-    private final UserRepository userRepository;
+    private final CurrentUserProvider currentUser;
 
-    public RestaurantService(RestaurantRepository restaurantRepository, UserRepository userRepository) {
+    public RestaurantService(RestaurantRepository restaurantRepository, CurrentUserProvider currentUser) {
         this.restaurantRepository = restaurantRepository;
-        this.userRepository = userRepository;
+        this.currentUser = currentUser;
     }
 
-    public Restaurant addRest(Restaurant restaurant){
-        Long id=restaurant.getUsers().getId();
-        Users users=userRepository.findById(id).orElseThrow(()->new RuntimeException("User not found"));
-        restaurant.setUsers(users);
+    /** Creates a restaurant owned by the currently authenticated RESTAURANT_OWNER. */
+    public Restaurant create(RestaurantRequest request) {
+        Restaurant restaurant = new Restaurant();
+        restaurant.setName(request.name());
+        restaurant.setAddress(request.address());
         restaurant.setActive(true);
+        restaurant.setOwner(currentUser.getUser());
         return restaurantRepository.save(restaurant);
     }
 
-    public List<Restaurant> getRestaurants() {
-        return restaurantRepository.findAll();
+    @Transactional(readOnly = true)
+    public Page<Restaurant> findAll(Pageable pageable) {
+        return restaurantRepository.findAll(pageable);
     }
 
+    @Transactional(readOnly = true)
+    public Page<Restaurant> findActive(Pageable pageable) {
+        return restaurantRepository.findByActiveTrue(pageable);
+    }
 
-    public Restaurant updateStatus(Long id, boolean active) {
-        Restaurant restaurant=restaurantRepository.getById(id);
+    @Transactional(readOnly = true)
+    public Page<Restaurant> findMine(Pageable pageable) {
+        if (currentUser.isAdmin()) {
+            return restaurantRepository.findAll(pageable);
+        }
+        return restaurantRepository.findByOwner_Id(currentUser.getId(), pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Restaurant findById(Long id) {
+        return restaurantRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Restaurant", id));
+    }
+
+    public Restaurant update(Long id, RestaurantRequest request) {
+        Restaurant restaurant = findById(id);
+        assertCanManage(restaurant);
+        restaurant.setName(request.name());
+        restaurant.setAddress(request.address());
+        return restaurantRepository.save(restaurant);
+    }
+
+    public Restaurant setActive(Long id, boolean active) {
+        Restaurant restaurant = findById(id);
+        assertCanManage(restaurant);
         restaurant.setActive(active);
         return restaurantRepository.save(restaurant);
     }
 
-    public List<Restaurant> getActiveRestaurants() {
-        List<Restaurant> result=new ArrayList<>();
-        List<Restaurant> rest=restaurantRepository.findAll();
-        for(Restaurant r: rest){
-            if(r.isActive()){
-                result.add(r);
-            }
+    public void delete(Long id) {
+        Restaurant restaurant = findById(id);
+        assertCanManage(restaurant);
+        restaurantRepository.delete(restaurant);
+    }
+
+    /** Only the owning RESTAURANT_OWNER or an ADMIN may mutate a restaurant. */
+    private void assertCanManage(Restaurant restaurant) {
+        if (!currentUser.isAdmin() && !restaurant.getOwner().getId().equals(currentUser.getId())) {
+            throw new AccessDeniedException("You do not own this restaurant");
         }
-        return result;
-    }
-
-    public Restaurant openRestaurants(Long id) {
-        Restaurant r=restaurantRepository.getById(id);
-        r.setActive(true);
-        return restaurantRepository.save(r);
-    }
-
-    public Restaurant closeRestaurants(Long id) {
-        Restaurant r=restaurantRepository.getById(id);
-        r.setActive(false);
-        return restaurantRepository.save(r);
     }
 }
